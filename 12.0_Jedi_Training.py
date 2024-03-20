@@ -21,6 +21,7 @@ Starter Testing Code:
 import arcade
 SW = 640
 SH = 480
+SPEED = 3
 
 class Ball:
     def __init__(self, pos_x, pos_y, dx, dy, rad, col):
@@ -39,24 +40,55 @@ class Ball:
         self.pos_x += self.dx
 
         #bounce off edge of screen
-        if self.pos_x < self.rad or self.pos_x > SW - self.rad:
-            self.dx *= -1
-        if self.pos_y < self.rad or self.pos_y > SH - self.rad:
-            self.dy *= -1
+        if self.pos_x < self.rad:
+            self.pos_x = self.rad
+        if self.pos_x > SW - self.rad:
+            self.pos_x = SW - self.rad
+        if self.pos_y < self.rad:
+            self.pos_y = self.rad
+        if self.pos_y > SH - self.rad:
+            self.pos_y = SH - self.rad
 
 class MyGame(arcade.Window):
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
         arcade.set_background_color(arcade.color.ASH_GREY)
-        self.ball = Ball(320, 240, 3, 2, 15, arcade.color.AUBURN)
+        self.set_mouse_visible(False)
+        self.ball = Ball(320, 240, 0, 0, 15, arcade.color.AUBURN)
+        #self.ball = Ball(320, 240, 15, arcade.color.AUBURN)
 
     def on_draw(self):
         arcade.start_render()
         self.ball.draw_ball()
 
+    #def on_mouse_motion(self, x: int, y: int, dx: int, dy: int):
+        #self.ball.pos_x = x
+        #self.ball.pos_y = y
+
+    #def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
+        #if button==arcade.MOUSE_BUTTON_LEFT:
+            #print("Left Mouse Button Pressed At ", x, y)
+        #elif button==arcade.MOUSE_BUTTON_RIGHT:
+            #print("Right Mouse Button Presses At ", x, y)
+
     def on_update(self, dt):
         self.ball.update_ball()
 
+    def on_key_press(self, key, modifiers):
+        if key == arcade.key.A:
+            self.ball.dx = -SPEED
+        elif key == arcade.key.W:
+            self.ball.dy = SPEED
+        elif key == arcade.key.S:
+            self.ball.dy = -SPEED
+        elif key == arcade.key.D:
+            self.ball.dx = SPEED
+
+    def on_key_release(self, key, modifiers):
+        if key == arcade.key.S or key == arcade.key.W:
+            self.ball.dy = 0
+        elif key == arcade.key.A or key == arcade.key.D:
+            self.ball.dx = 0
 def main():
     window = MyGame(SW, SH, "User Control Practice")
     arcade.run()
